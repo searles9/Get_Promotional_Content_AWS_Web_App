@@ -8,4 +8,9 @@ AWS web app that allows you to enter your email to get a link to promotional con
 * API triggers a lambda function
 * Lambda function generates a pre-signed URL for our promotional content file stored in S3
 * Lambda uses SES to send the pre-signed URL to our user/customer
-* Will potentially add: stores users email in a DynamoDB table
+
+### Step 1 - Setting up the S3 website
+* Deploy the cloud formation template in the "Step 1 folder"
+* The template deploys an S3 bucket and enables it for static website hosting
+
+### Step 2 -
