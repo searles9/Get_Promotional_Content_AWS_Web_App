@@ -1,0 +1,9 @@
+*HTTP API SAM://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-httpapi.html
+*HTTP API: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-apigatewayv2-api.html
+-also: https://github.com/awsdocs/aws-cloudformation-user-guide/blob/main/doc_source/aws-resource-apigatewayv2-api.md
+*HTTP API CORS: https://docs.amazonaws.cn/en_us/AWSCloudFormation/latest/UserGuide/aws-properties-apigatewayv2-api-cors.html
+*Working with HTTP APIs: https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api.html
+*REST API example:  https://bl.ocks.org/magnetikonline/c314952045eee8e8375b82bc7ec68e88
+
+API CDK:
+* aws apigatewayv2 create-api --name my-api --protocol-type HTTP --target arn:aws:lambda:us-east-2:123456789012:function:function-name
