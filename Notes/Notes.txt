@@ -4,6 +4,40 @@
 *HTTP API CORS: https://docs.amazonaws.cn/en_us/AWSCloudFormation/latest/UserGuide/aws-properties-apigatewayv2-api-cors.html
 *Working with HTTP APIs: https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api.html
 *REST API example:  https://bl.ocks.org/magnetikonline/c314952045eee8e8375b82bc7ec68e88
+*PARAMS: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/pseudo-parameter-reference.html
 
 API CDK:
 * aws apigatewayv2 create-api --name my-api --protocol-type HTTP --target arn:aws:lambda:us-east-2:123456789012:function:function-name
+
+YAML API:
+HttpApi:
+  Type: AWS::ApiGatewayV2::Api
+  Properties:
+    Name: Lambda Proxy
+    Description: Lambda proxy using quick create
+    ProtocolType: HTTP
+    Target: arn:aws:apigateway:{region}:lambda:path/2015-03-31/functions/arn:aws:lambda:{region}:{account-id}:function:{function-name}/invocations
+
+
+Error when creating the API:
+AWS ARN for integration must contain path or action
+(Service: AmazonApiGatewayV2; Status Code: 400;
+Error Code: BadRequestException;
+Request ID: 34127f6c-dfb2-4634-af72-25936e2ccc47; Proxy: null)
+
+
+
+*Create stage
+- https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-apigatewayv2-stage.html
+*Create deployment to point at the route we made
+
+
+-https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-apigatewayv2-deployment.html#cfn-apigatewayv2-deployment-stagename
+
+
+CORS:
+CorsConfiguration:
+  AllowOrigins:
+    - "*"
+  AllowMethods:
+    - POST

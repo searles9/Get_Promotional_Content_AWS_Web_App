@@ -1,0 +1,169 @@
+Parameters:
+    HttpApiName:
+      Type: String
+      Default: PromoAPI
+
+Resources:
+  # Creates the HTTP API
+  myHttpApi:
+      Type: AWS::ApiGatewayV2::Api
+      DependsOn: myLambdaFunction
+      Properties:
+        Name: PromoAPI
+        ProtocolType: HTTP
+        Target: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${myLambdaFunction}/invocations
+        CorsConfiguration:
+          AllowOrigins:
+            - "*"
+          AllowMethods:
+            - POST
+
+  # Permits API gateway to trigger/invoke Lambda
+  myApiTriggerLambdaPermission:
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      Action: "lambda:InvokeFunction"
+      FunctionName: !GetAtt myLambdaFunction.Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Join [
+      "", [
+        "arn:aws:execute-api:",
+        {"Ref": "AWS::Region"}, ":",
+        {"Ref": "AWS::AccountId"}, ":",
+        !Ref myHttpApi, "/*/*/*"
+        ]
+      ]
+
+  # Seta up the integration with API gateway and Lambda
+  myApiLambdProxyIntegration:
+    Type: "AWS::ApiGatewayV2::Integration"
+    Properties:
+      Description: Lambda Integration
+      ConnectionType: INTERNET
+      IntegrationMethod: POST
+      IntegrationUri: !Sub  "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${myLambdaFunction.Arn}/invocations"
+      PayloadFormatVersion: '2.0'
+      ApiId: !Ref myHttpApi
+      IntegrationType: AWS_PROXY
+
+  # Sets up the route for API gateway
+  myRoute:
+    Type: 'AWS::ApiGatewayV2::Route'
+    DependsOn:
+      - myApiLambdProxyIntegration
+    Properties:
+      ApiId: !Ref myHttpApi
+      RouteKey: 'POST /PromoFunction'
+      AuthorizationType: NONE
+      Target: !Join
+        - /
+        - - integrations
+          - !Ref myApiLambdProxyIntegration
+
+  # Creates a Prod stage in API gateway
+  myProdStage:
+    Type: AWS::ApiGatewayV2::Stage
+    Properties:
+      StageName: Prod
+      ApiId: !Ref myHttpApi
+
+  # Deploys the API stage
+  myAPIDeployment:
+    Type: AWS::ApiGatewayV2::Deployment
+    DependsOn:
+      - myProdStage
+    Properties:
+      ApiId: !Ref myHttpApi
+      Description: Deployment for the prod stage
+      StageName: !Ref myProdStage
+
+  # Creates the Lambda function
+  myLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        ZipFile: |
+          'use strict';
+          console.log('Loading function');
+          const AWS = require('aws-sdk');
+          const sesClient = new AWS.SES();
+          const sesReplyAddress = "dsearlesaws1@gmail.com";
+
+          exports.handler = (event, context, callback) => {
+              console.log('Received event:', JSON.stringify(event, null)); //,# with added objects
+              var emailObj = JSON.parse(event.body);
+              var params = getEmailMessage(emailObj);
+              var sendEmailPromise = sesClient.sendEmail(params).promise();
+
+              var response = {
+                  statusCode: 200
+              };
+
+              sendEmailPromise.then(function(result) {
+                  console.log(result);
+                  callback(null, response);
+              }).catch(function(err) {
+                  console.log(err);
+                  response.statusCode = 500;
+                  callback(null, response);
+              });
+          };
+
+          function getEmailMessage (emailObj) {
+              var emailRequestParams = {
+                  Destination: {
+                    ToAddresses: [ emailObj.email ]
+                  },
+                  Message: {
+                      Body: {
+                          Text: {
+                              Data: "Presigned URL"
+                          }
+                      },
+                      Subject: {
+                          Data: "Promotional Content"
+                      }
+                  },
+                  Source: sesReplyAddress,
+                  ReplyToAddresses: [ sesReplyAddress ]
+              };
+
+              return emailRequestParams;
+          }
+      Handler: index.handler
+      Runtime: nodejs12.x
+      FunctionName: PromoFunction
+      Role: !GetAtt myLambdaExecutionRole.Arn
+
+  # Creates the execution role for Lambda which allows sending email with SES and allows logging actions with CloudWatch
+  myLambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Action:
+              - sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+      Policies:
+      - PolicyName: lambda
+        PolicyDocument:
+          Statement:
+          - Effect: Allow
+            Action:
+              - 'logs:*'
+            Resource:
+              - arn:aws:logs:*:*:*
+          - Effect: Allow
+            Action:
+              - 'ses:SendEmail'
+            Resource:
+              - '*'
+
+Outputs:
+  # Outputs the URL needed for the site
+  apiGatewayInvokeURL:
+    Value: !Sub https://${myHttpApi}.execute-api.${AWS::Region}.amazonaws.com/${myProdStage}/PromoFunction
