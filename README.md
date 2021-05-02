@@ -82,6 +82,7 @@ With the infrastructure and files in place you can now test the site.
 1. Click on the link for the "WebsiteURL" CloudFormation output
 ![image](https://user-images.githubusercontent.com/33853931/116829631-b9fe3c00-ab72-11eb-8efc-943a2a5450e7.png)
 2. Enter an email and hit submit. If your account is still in the SES sandbox enter the email from step 1.
+![image](https://user-images.githubusercontent.com/33853931/116829740-912a7680-ab73-11eb-8a71-a8695b3d71e4.png)
 3.  Verify that you recived the email:
 ![image](https://user-images.githubusercontent.com/33853931/116829689-2e38df80-ab73-11eb-90db-c263102d4789.png)
 
@@ -91,18 +92,9 @@ With the infrastructure and files in place you can now test the site.
 aws s3 rm s3://BUCKETNAME --recursive
 ``` 
 2. Delete the CloudFormation stack
-
+![image](https://user-images.githubusercontent.com/33853931/116829767-bb7c3400-ab73-11eb-84c2-62fd4e418b25.png)
 
 
 ### Room for improovement:
 * The bucket that contains the promotional content is publicly availible. To prevent people from sharing the link we could make the bucket private and have Lambda generate presigned URL's
 * There is no real record of what emails are entered. We could add logging or potentially sent the submitted addresses to a database. 
-
-Notes:
-* Website bucket
-* aws s3 cp C:\Users\User\Documents\Repos\Get_Promotional_Content_AWS_Web_App\code\Website\index.html s3://testdeploy-s3websitebucket-tk9vfqpr55mr/index.html
-* aws s3 rm s3://test-s3websitebucket-1thv9v4m6d2p7 --recursive
-
-* Promo bucket
-* aws s3 cp C:\Users\User\Documents\Repos\Get_Promotional_Content_AWS_Web_App\code\Website\FileName.txt s3://	testdeploy-mys3promobucket-1g0hqlnw50vi4/FileName.txt
-* aws s3 rm s3://test-mys3promobucket-131u67lm370w9 --recursive
