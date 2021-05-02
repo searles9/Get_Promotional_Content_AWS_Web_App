@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Get Content</title>
+  <title>Get Promotional Content</title>
   <style>
     body{
       background-color: gray;
@@ -54,11 +54,9 @@
     function sendDataToLambda(e) {
       e.preventDefault();
 
-      // Gets the values of each field in the form - this data is sent to Lambda
       var formEmail = document.querySelector('.form-email').value;
 
-      //'REPLACE-WITH-THE-API-GATEWAY-ENDPOINT-URL'
-      var endpoint = 'https://od4g7z1dze.execute-api.us-east-1.amazonaws.com/Prod/PromoFunction';
+      var endpoint = 'REPLACE-WITH-THE-API-GATEWAY-ENDPOINT-URL';
 
       // Takes the form value and makes it into an object
       var body = {
