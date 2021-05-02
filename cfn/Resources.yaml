@@ -4,7 +4,7 @@ Parameters:
       Default: PromoAPI
     ReplyEmail:
       Type: String
-      Default: dsearlesaws1@gmail.com
+      Default: youremail@yourdomain.com
     PromotionalDocumentName:
       Type: String
       Default: FileName.txt
