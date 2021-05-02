@@ -1,10 +1,37 @@
-# Get_Promotional_Content_AWS_Web_App (in progress)
-AWS web app that allows you to enter your email to get a link to promotional content emailed to you
-
-### App architecture
-* User goes to website hosted in S3
-* User enters email into text field and hits submit
+# Currently editing this
+# App architecture
+* User goes to a website hosted in S3
+* User enters email into the text field and hits submit
 * The submit button contacts an AWS API
 * API triggers a lambda function
-* Lambda function generates a pre-signed URL for our promotional content file stored in S3
-* Lambda uses SES to send the pre-signed URL to our user/customer
+* Lambda function sends the S3 object URL to the user's email via SES
+***
+# Purpose:  
+This repo can be used to deploy a simple landing page that allows customers to enter their email and have promotional content emailed to them. This was built for testing and learning purposes and would need some updates and changes to be production-ready.
+
+
+EX: Enter your email to get a PDF guide with steps on how to complete xyz
+***
+# Steps to deploy the site:
+### Step 1: Add your email to SES
+The app processes the website requests with Lambda and uses SES to send the email. If you have a new AWS account
+
+### Step 1: Deploy the infrastructure via CloudFormation
+The "Resources.YAML"  (cfn\Resources.yaml) file deploys the following resources:
+* An S3 bucket that is enabled for website hosting
+* An S3 bucket with public read access that will contain the promotional content file
+* An HTTP API (including a route, stage, integration settings and deployment)
+* A Lambda function that processes the requests and sends the email
+* A Lambda execution role
+
+
+
+
+Notes:
+* Website bucket
+* aws s3 cp C:\Users\User\Documents\Repos\Get_Promotional_Content_AWS_Web_App\code\Website\index.html s3://test-s3websitebucket-1thv9v4m6d2p7/index.html
+* aws s3 rm s3://test-s3websitebucket-1thv9v4m6d2p7 --recursive
+
+* Promo bucket
+* aws s3 cp C:\Users\User\Documents\Repos\Get_Promotional_Content_AWS_Web_App\code\Website\FileName.txt s3://test-mys3promobucket-131u67lm370w9/FileName.txt
+* aws s3 rm s3://test-mys3promobucket-131u67lm370w9 --recursive

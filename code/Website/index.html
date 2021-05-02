@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Get Content</title>
+  <style>
+    body{
+      background-color: gray;
+    }
+    input {
+      display: block;
+      margin: 20px;
+      padding: 10px;
+      width: 100%;
+        border-radius: 15px;
+    }
+    .centerdiv{
+      margin: 0 auto;
+      width:30%;
+      position: relative;
+      margin-top: 15%;
+    }
+    #table{
+      width: 100%;
+      border-radius: 15px;
+    }
+    #Title, #desc{
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+   <div  class="centerdiv">
+     <h1 id="Title">Get Promo Content</h1>
+       <p id="desc">Info, more info, Info, more info,Info, more info,Info, more info,Info, more info, Info, more info, Info, more info,Info, more info,Info, more info,Info, more info,
+       Info, more info, Info, more info,Info, more info,Info, more info,Info, more info,  Info, more info, Info, more info,Info, more info,Info, more info,Info, more info,
+      Info, more info, Info, more info,Info, more info,Info, more info,Info, more info
+       </p>
+     <table id="table">
+      <tr>
+      <form id="submit-email-form">
+        <td>  <input type="text" name="email" placeholder="Email Address" class="form-email"> </td>
+        <td>  <input type="submit" name="submit" value="Submit" class="form-submit"> </td>
+      </tr>
+      </form>
+      </table>
+   </div>
+  </div>
+
+  <script type="text/javascript">
+    document.getElementById('submit-email-form').addEventListener('submit', sendDataToLambda);
+
+    function sendDataToLambda(e) {
+      e.preventDefault();
+
+      // Gets the values of each field in the form - this data is sent to Lambda
+      var formEmail = document.querySelector('.form-email').value;
+
+      //'REPLACE-WITH-THE-API-GATEWAY-ENDPOINT-URL'
+      var endpoint = 'https://od4g7z1dze.execute-api.us-east-1.amazonaws.com/Prod/PromoFunction';
+
+      // Takes the form value and makes it into an object
+      var body = {
+        email: formEmail
+      }
+
+      // Used by Fetch API
+      var lambdaRequest = new Request(endpoint, {
+        method: 'POST',
+        mode: 'cors',
+        body: JSON.stringify(body)
+      });
+
+      // Uses the Fetch API to make the request
+      fetch(lambdaRequest)
+        .then(response => console.log(response))
+        .catch(err => console.log(err));
+    }
+  </script>
+</body>
+
+</html>
