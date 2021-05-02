@@ -4,6 +4,7 @@ This repo can be used to deploy a simple landing page that allows customers to e
 
 
 EX: Enter your email to get a PDF guide with steps on how to complete xyz
+
 ![image](https://user-images.githubusercontent.com/33853931/116800396-aa2d1c00-aace-11eb-9c33-59e64da8e51a.png)
 ***
 # App architecture
